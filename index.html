@@ -146,6 +146,65 @@
       font-size: 1.5em;
       margin: 10px 0;
     }
+    #foodMenu {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 1000;
+      width: 90%;
+      max-width: 500px;
+    }
+    #foodMenu h2 {
+      color: #e75480;
+      margin-bottom: 10px;
+    }
+    #foodSearch {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e75480;
+      border-radius: 10px;
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+    .food-category {
+      margin: 15px 0;
+    }
+    .food-category h3 {
+      color: #9b59b6;
+      margin-bottom: 8px;
+    }
+    .food-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .food-item {
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      padding: 8px 12px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: transform 0.2s;
+    }
+    .food-item:hover {
+      transform: scale(1.1);
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #e75480;
+    }
   </style>
 </head>
 <body>
@@ -186,10 +245,17 @@
       </div>
       
       <div class="buttons">
-        <button class="feed" onclick="feed()">🍎 Feed</button>
+        <button class="feed" onclick="openFoodMenu()">🍎 Feed</button>
         <button class="play" onclick="play()">🎮 Play</button>
         <button class="clean" onclick="clean()">✨ Clean</button>
         <button class="sleep" onclick="sleep()">💤 Sleep</button>
+      </div>
+      
+      <div id="foodMenu">
+        <span class="close-btn" onclick="closeFoodMenu()">✖</span>
+        <h2>🍽️ Feed Your Rock!</h2>
+        <input type="text" id="foodSearch" placeholder="🔍 Search for food..." oninput="filterFood()">
+        <div id="foodList"></div>
       </div>
       <div class="buttons">
         <button id="musicBtn" onclick="startMusic()" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white;">🎵 Music OFF</button>
@@ -399,20 +465,86 @@
       document.getElementById('message').textContent = msg;
     }
     
-    function feed() {
-      if (!musicPlaying) clickSound();
-      if (rock.hunger < 100) {
-        rock.hunger = Math.min(100, rock.hunger + 25);
-        rock.energy = Math.min(100, rock.energy + 10);
-        showMessage('happy');
-        addXP(5);
-        animateRock();
-        if (!musicPlaying) happySound();
-        updateDisplay();
-        saveGame();
-      } else {
-        document.getElementById('message').textContent = 'I\'m full! 😊';
+    const foodItems = {
+      'Food': ['🍕 Pizza', '🍔 Burger', '🍟 Fries', '🌭 Hot Dog', '🍝 Pasta', '🍜 Noodles', '🍛 Rice', '🥗 Salad', '🥪 Sandwich', '🌮 Taco', '🌯 Burrito', '🍱 Sushi', '🍖 Steak', '🍗 Chicken', '🥩 Beef', '🍤 Shrimp', '🦀 Crab', '🦞 Lobster', '🦐 Prawn', '🥚 Egg', '🍳 Fried Egg', '🥞 Pancakes', '🧇 Waffles', '🥓 Bacon', '🥨 Pretzel'],
+      'Fruits': ['🍎 Apple', '🍌 Banana', '🍇 Grapes', '🍓 Strawberry', '🍒 Cherry', '🍑 Peach', '🍍 Pineapple', '🥝 Kiwi', '🍉 Watermelon', '🍊 Orange', '🍋 Lemon', '🥭 Mango', '🥥 Coconut', '🍈 Melon', '🍏 Green Apple'],
+      'Vegetables': ['🥕 Carrot', '🥒 Cucumber', '🥬 Lettuce', '🥦 Broccoli', '🧅 Onion', '🧄 Garlic', '🍄 Mushroom', '🌽 Corn', '🍅 Tomato', '🥔 Potato', '🥑 Avocado', '🌶️ Pepper', '🫑 Bell Pepper'],
+      'Sweets': ['🍩 Donut', '🍪 Cookie', '🎂 Cake', '🧁 Cupcake', '🥧 Pie', '🍫 Chocolate', '🍬 Candy', '🍭 Lollipop', '🍮 Pudding', '🍯 Honey', '🥮 Mooncake', '🍡 Dango'],
+      'Ice Cream': ['🍦 Soft Serve', '🍨 Ice Cream', '🍧 Shaved Ice', '🧊 Ice Cube'],
+      'Drinks': ['🥤 Soda', '🍹 Juice', '🧃 Drink Box', '🧋 Bubble Tea', '🍵 Tea', '☕ Coffee', '🥛 Milk', '🍶 Sake', '🍺 Beer', '🍷 Wine', '🥂 Champagne', '🍸 Cocktail', '🍹 Tropical Drink'],
+      'Snacks': ['🍿 Popcorn', '🥜 Peanuts', '🍫 Chocolate Bar', '🥨 Pretzel', '🥯 Bagel', '🥐 Croissant', '🥖 Bread', '🧀 Cheese', '🌯 Wrap']
+    };
+
+    function openFoodMenu() {
+      const menu = document.getElementById('foodMenu');
+      menu.style.display = 'block';
+      renderFoodList();
+    }
+
+    function closeFoodMenu() {
+      document.getElementById('foodMenu').style.display = 'none';
+    }
+
+    function renderFoodList() {
+      const container = document.getElementById('foodList');
+      let html = '';
+      for (const [category, items] of Object.entries(foodItems)) {
+        html += `
+          <div class="food-category">
+            <h3>${category}</h3>
+            <div class="food-grid">
+              ${items.map(item => `<div class="food-item" onclick="feedWithFood('${item}')">${item}</div>`).join('')}
+            </div>
+          </div>
+        `;
       }
+      container.innerHTML = html;
+    }
+
+    function filterFood() {
+      const search = document.getElementById('foodSearch').value.toLowerCase();
+      const container = document.getElementById('foodList');
+      let html = '';
+      for (const [category, items] of Object.entries(foodItems)) {
+        const filtered = items.filter(item => item.toLowerCase().includes(search));
+        if (filtered.length > 0) {
+          html += `
+            <div class="food-category">
+              <h3>${category}</h3>
+              <div class="food-grid">
+                ${filtered.map(item => `<div class="food-item" onclick="feedWithFood('${item}')">${item}</div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+      }
+      container.innerHTML = html || '<p style="text-align:center;color:#888;">No food found! 🍽️</p>';
+    }
+
+    function feedWithFood(foodName) {
+      closeFoodMenu();
+      if (!musicPlaying) clickSound();
+      
+      // Calculate hunger boost based on food type
+      let hungerBoost = 20;
+      if (foodName.includes('🍔') || foodName.includes('🍕') || foodName.includes('🍟')) hungerBoost = 30;
+      if (foodName.includes('🍦') || foodName.includes('🍨') || foodName.includes('🍧')) hungerBoost = 15;
+      if (foodName.includes('🥗') || foodName.includes('🍎')) hungerBoost = 25;
+      
+      rock.hunger = Math.min(100, rock.hunger + hungerBoost);
+      rock.happiness = Math.min(100, rock.happiness + 10);
+      
+      document.getElementById('message').textContent = `Yum! Ate ${foodName}! 😋`;
+      addXP(5);
+      animateRock();
+      if (!musicPlaying) happySound();
+      updateDisplay();
+      saveGame();
+    }
+
+    // Replace old feed function
+    function feed() {
+      openFoodMenu();
     }
     
     function play() {
