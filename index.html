@@ -232,12 +232,12 @@
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
       osc.frequency.value = freq;
-      gain.gain.value = musicVolume;
+      gain.gain.setValueAtTime(musicVolume, audioCtx.currentTime);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-      osc.stop(audioCtx.currentTime + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+      osc.stop(audioCtx.currentTime + 0.35);
     }
     
     function startMusic() {
