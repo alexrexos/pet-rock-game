@@ -200,6 +200,11 @@
         <span id="speedDisplay" style="padding: 10px; font-size: 1.2em; color: #e75480;">Speed: 1.0x</span>
         <button onclick="speedUp()" style="background: linear-gradient(135deg, #fa709a, #fee140); color: white;">🐰 Faster</button>
       </div>
+      <div class="buttons">
+        <button onclick="volumeDown()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">🔉 Quieter</button>
+        <span id="volumeDisplay" style="padding: 10px; font-size: 1.2em; color: #9b59b6;">🔊 50%</span>
+        <button onclick="volumeUp()" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">🔊 Louder</button>
+      </div>
     </div>
   </div>
   
@@ -220,13 +225,14 @@
     let currentMelody = 0;
     let noteIndex = 0;
     let musicSpeed = 400;
+    let musicVolume = 0.05;
     
     function playNote(freq) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
       osc.frequency.value = freq;
-      gain.gain.value = 0.05;
+      gain.gain.value = musicVolume;
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
@@ -295,6 +301,16 @@
           noteIndex = (noteIndex + 1) % melody.length;
         }, musicSpeed);
       }
+    }
+    
+    function volumeUp() {
+      musicVolume = Math.min(0.2, musicVolume + 0.02);
+      document.getElementById('volumeDisplay').textContent = '🔊 ' + Math.round(musicVolume * 500) + '%';
+    }
+    
+    function volumeDown() {
+      musicVolume = Math.max(0.01, musicVolume - 0.02);
+      document.getElementById('volumeDisplay').textContent = '🔊 ' + Math.round(musicVolume * 500) + '%';
     }
     
     function playSound(freq, duration, type = 'sine') {
