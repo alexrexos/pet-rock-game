@@ -451,11 +451,11 @@
     
     // Rock Language Translator! 🪨🗣️
     const rockLanguage = {
-      happy: ['*rumbles happily*', '*clack clack*', '*smooth vibrations*', '*sparkle sounds*', '*tumble tumble*'],
-      hungry: ['*grumble grumble*', '*crumbly noises*', '*hollow echo*'],
-      tired: ['*slow grinding*', '*pebble snore*', '*mossy yawn*'],
-      dirty: ['*dusty cough*', '*sandy scratches*', '*muddy grumble*'],
-      sad: ['*cracked whisper*', '*lonely echo*', '*faded shine*']
+      happy: ['*rumble rumble*', '*clack clack*', '*sparkle sparkle*', '*tumble tumble*'],
+      hungry: ['*grumble grumble*', '*hollow hollow*', '*rumble hollow*'],
+      tired: ['*mossy mossy*', '*pebble pebble*', '*grinding grinding*'],
+      dirty: ['*dusty dusty*', '*sandy sandy*', '*muddy muddy*'],
+      sad: ['*crack crack*', '*echo echo*', '*faded faded*']
     };
     
     let translatorOn = false;
@@ -514,9 +514,23 @@
         'grumble': 'hungry',
         'tumble': 'excited',
         'crack': 'sad',
-        'echo': 'lonely'
+        'echo': 'lonely',
+        'smooth': 'love',
+        'vibrations': 'yay',
+        'sparkle': 'fun',
+        'hollow': 'food',
+        'grinding': 'tired',
+        'pebble': 'sleepy',
+        'mossy': 'cozy',
+        'dusty': 'bath',
+        'sandy': 'dirty',
+        'muddy': 'yuck',
+        'cracked': 'sad',
+        'faded': 'miss',
+        'gentle': 'nice',
+        'tumble': 'play'
       };
-      return sounds.map(s => meanings[s] || 'hmm').join(' ');
+      return sounds.map(s => meanings[s] || '✨').join(' ');
     }
     
     function startGame() {
