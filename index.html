@@ -400,14 +400,14 @@
     }
     
     function feed() {
-      clickSound();
+      if (!musicPlaying) clickSound();
       if (rock.hunger < 100) {
         rock.hunger = Math.min(100, rock.hunger + 25);
         rock.energy = Math.min(100, rock.energy + 10);
         showMessage('happy');
         addXP(5);
         animateRock();
-        happySound();
+        if (!musicPlaying) happySound();
         updateDisplay();
         saveGame();
       } else {
@@ -416,7 +416,7 @@
     }
     
     function play() {
-      clickSound();
+      if (!musicPlaying) clickSound();
       if (rock.energy >= 20) {
         rock.happiness = Math.min(100, rock.happiness + 30);
         rock.energy = Math.max(0, rock.energy - 20);
@@ -424,7 +424,7 @@
         showMessage('happy');
         addXP(10);
         animateRock();
-        happySound();
+        if (!musicPlaying) happySound();
         updateDisplay();
         saveGame();
       } else {
@@ -433,31 +433,31 @@
     }
     
     function clean() {
-      clickSound();
+      if (!musicPlaying) clickSound();
       rock.clean = 100;
       rock.happiness = Math.min(100, rock.happiness + 15);
       showMessage('happy');
       addXP(5);
       animateRock();
-      happySound();
+      if (!musicPlaying) happySound();
       updateDisplay();
       saveGame();
     }
     
     function sleep() {
-      clickSound();
+      if (!musicPlaying) clickSound();
       rock.energy = 100;
       rock.hunger = Math.max(0, rock.hunger - 20);
       showMessage('happy');
       addXP(5);
       document.getElementById('message').textContent = 'Zzz... 😴✨ Good nap!';
-      happySound();
+      if (!musicPlaying) happySound();
       updateDisplay();
       saveGame();
     }
     
     function petRock() {
-      clickSound();
+      if (!musicPlaying) clickSound();
       rock.happiness = Math.min(100, rock.happiness + 5);
       showMessage('happy');
       addXP(2);
