@@ -236,15 +236,8 @@
       let hearts = Math.floor((rock.happiness + rock.hunger + rock.clean + rock.energy) / 80);
       document.getElementById('hearts').textContent = '💕'.repeat(Math.min(5, hearts));
       
-      // Change rock emoji based on mood
-      const rockEl = document.getElementById('rock');
-      if (rock.happiness < 30 || rock.hunger < 30 || rock.energy < 30) {
-        rockEl.textContent = '🥀';
-      } else if (rock.happiness > 80 && rock.hunger > 80) {
-        rockEl.textContent = '🌈';
-      } else {
-        rockEl.textContent = '🪨';
-      }
+      // Rock always stays a rock!
+      document.getElementById('rock').textContent = '🪨';
     }
     
     function showMessage(type) {
