@@ -477,19 +477,18 @@
     
     function translateCurrentMessage() {
       if (!translatorOn) return;
-      const currentMsg = document.getElementById('message').textContent;
       
-      // Find which category the message belongs to
-      for (const [type, msgs] of Object.entries(messages)) {
-        if (msgs.includes(currentMsg)) {
-          const rockSayings = rockLanguage[type];
-          const rockSaying = rockSayings[Math.floor(Math.random() * rockSayings.length)];
-          document.getElementById('rockTranslationText').textContent = rockSaying;
-          return;
-        }
-      }
-      // Default rock translation
-      document.getElementById('rockTranslationText').textContent = '*gentle rumble*';
+      // Just show what the rock is feeling in rock language!
+      const rockFeelings = [
+        '*rumble rumble* = I\'m happy! 😊',
+        '*clack clack* = I love you! 💕',
+        '*sparkle sparkle* = This is fun! ✨',
+        '*tumble tumble* = Yay! 🎉',
+        '*grumble grumble* = I\'m hungry... 🍎',
+        '*pebble pebble* = I\'m sleepy... 😴'
+      ];
+      const saying = rockFeelings[Math.floor(Math.random() * rockFeelings.length)];
+      document.getElementById('rockTranslationText').textContent = saying;
     }
     
     function translateToRock(text) {
