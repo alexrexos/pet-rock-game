@@ -273,10 +273,11 @@
     function speedUp() {
       musicSpeed = Math.max(100, musicSpeed - 50);
       document.getElementById('speedDisplay').textContent = 'Speed: ' + (400 / musicSpeed).toFixed(1) + 'x';
+      noteIndex = 0;
       if (musicPlaying) {
         clearInterval(musicInterval);
+        const melody = melodies[melodyNames[currentMelody]];
         musicInterval = setInterval(() => {
-          const melody = melodies[melodyNames[currentMelody]];
           playNote(melody[noteIndex]);
           noteIndex = (noteIndex + 1) % melody.length;
         }, musicSpeed);
@@ -286,10 +287,11 @@
     function slowDown() {
       musicSpeed = Math.min(800, musicSpeed + 50);
       document.getElementById('speedDisplay').textContent = 'Speed: ' + (400 / musicSpeed).toFixed(1) + 'x';
+      noteIndex = 0;
       if (musicPlaying) {
         clearInterval(musicInterval);
+        const melody = melodies[melodyNames[currentMelody]];
         musicInterval = setInterval(() => {
-          const melody = melodies[melodyNames[currentMelody]];
           playNote(melody[noteIndex]);
           noteIndex = (noteIndex + 1) % melody.length;
         }, musicSpeed);
