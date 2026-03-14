@@ -36,9 +36,16 @@
     }
     #startPage h1 {
       font-size: 3em;
-      color: #e75480;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
-      margin: 20px 0;
+      background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: rainbow 3s linear infinite;
+      background-size: 400% 100%;
+    }
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 400% 50%; }
     }
     #startPage .subtitle {
       font-size: 1.5em;
@@ -51,12 +58,18 @@
       padding: 20px 60px;
       border: none;
       border-radius: 50px;
-      background: linear-gradient(135deg, #43e97b, #38f9d7);
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff, #5f27cd);
+      background-size: 300% 100%;
+      animation: rainbow-btn 2s linear infinite;
       color: white;
       cursor: pointer;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       transition: all 0.3s;
-      animation: pulse 2s ease-in-out infinite;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    @keyframes rainbow-btn {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
     }
     .start-btn:hover {
       transform: scale(1.1);
@@ -69,12 +82,20 @@
     .sparkles {
       font-size: 2em;
       margin-top: 20px;
-      animation: sparkle 1.5s ease-in-out infinite;
+      animation: sparkle 1s ease-in-out infinite;
     }
     @keyframes sparkle {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
     }
+    
+    /* Rainbow sparkles */
+    .sparkle-red { color: #ff6b6b; }
+    .sparkle-orange { color: #feca57; }
+    .sparkle-yellow { color: #fff200; }
+    .sparkle-green { color: #48dbfb; }
+    .sparkle-blue { color: #54a0ff; }
+    .sparkle-purple { color: #9b59b6; }
     .subtitle {
       font-size: 1.5em;
       color: #9b59b6;
@@ -276,7 +297,7 @@
     <h1>Pet Rock!</h1>
     <p class="subtitle">Maria's Game 🌸</p>
     <button class="start-btn" onclick="showGame()">START! 🎮</button>
-    <div class="sparkles">✨ 🌟 💫 ⭐ 🌟 ✨</div>
+    <div class="sparkles">🌈 ❤️ 🧡 💛 💚 💙 💜 🌈</div>
   </div>
   
   <!-- Game Page -->
