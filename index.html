@@ -259,8 +259,14 @@
     function changeMelody() {
       currentMelody = (currentMelody + 1) % melodyNames.length;
       document.getElementById('melodyBtn').textContent = '🎶 ' + melodyNames[currentMelody].toUpperCase();
+      noteIndex = 0;
       if (musicPlaying) {
-        noteIndex = 0;
+        clearInterval(musicInterval);
+        const melody = melodies[melodyNames[currentMelody]];
+        musicInterval = setInterval(() => {
+          playNote(melody[noteIndex]);
+          noteIndex = (noteIndex + 1) % melody.length;
+        }, musicSpeed);
       }
     }
     
