@@ -193,17 +193,22 @@
       </div>
       <div class="buttons">
         <button id="musicBtn" onclick="startMusic()" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white;">🎵 Music OFF</button>
-        <button id="melodyBtn" onclick="changeMelody()" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: white;">🎶 HAPPY</button>
+        <button onclick="toggleMusicSettings()" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: white;">⚙️ Settings</button>
       </div>
-      <div class="buttons">
-        <button onclick="slowDown()" style="background: linear-gradient(135deg, #84fab0, #8fd3f4); color: white;">🐢 Slower</button>
-        <span id="speedDisplay" style="padding: 10px; font-size: 1.2em; color: #e75480;">Speed: 1.0x</span>
-        <button onclick="speedUp()" style="background: linear-gradient(135deg, #fa709a, #fee140); color: white;">🐰 Faster</button>
-      </div>
-      <div class="buttons">
-        <button onclick="volumeDown()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">🔉 Quieter</button>
-        <span id="volumeDisplay" style="padding: 10px; font-size: 1.2em; color: #9b59b6;">🔊 50%</span>
-        <button onclick="volumeUp()" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">🔊 Louder</button>
+      <div id="musicSettings" style="display:none;">
+        <div class="buttons">
+          <button id="melodyBtn" onclick="changeMelody()" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: white;">🎶 HAPPY</button>
+        </div>
+        <div class="buttons">
+          <button onclick="slowDown()" style="background: linear-gradient(135deg, #84fab0, #8fd3f4); color: white;">🐢 Slower</button>
+          <span id="speedDisplay" style="padding: 10px; font-size: 1.2em; color: #e75480;">Speed: 1.0x</span>
+          <button onclick="speedUp()" style="background: linear-gradient(135deg, #fa709a, #fee140); color: white;">🐰 Faster</button>
+        </div>
+        <div class="buttons">
+          <button onclick="volumeDown()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">🔉 Quieter</button>
+          <span id="volumeDisplay" style="padding: 10px; font-size: 1.2em; color: #9b59b6;">🔊 50%</span>
+          <button onclick="volumeUp()" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">🔊 Louder</button>
+        </div>
       </div>
     </div>
   </div>
@@ -311,6 +316,15 @@
     function volumeDown() {
       musicVolume = Math.max(0.01, musicVolume - 0.02);
       document.getElementById('volumeDisplay').textContent = '🔊 ' + Math.round(musicVolume * 500) + '%';
+    }
+    
+    function toggleMusicSettings() {
+      const settings = document.getElementById('musicSettings');
+      if (settings.style.display === 'none') {
+        settings.style.display = 'block';
+      } else {
+        settings.style.display = 'none';
+      }
     }
     
     function playSound(freq, duration, type = 'sine') {
