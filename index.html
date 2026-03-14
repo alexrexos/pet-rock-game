@@ -191,11 +191,76 @@
         <button class="play" onclick="play()">🎮 Play</button>
         <button class="clean" onclick="clean()">✨ Clean</button>
         <button class="sleep" onclick="sleep()">💤 Sleep</button>
+        <button id="musicBtn" onclick="startMusic()">🎵 Music OFF</button>
       </div>
     </div>
   </div>
   
   <script>
+    // Fun sounds and music!
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let musicPlaying = false;
+    let musicInterval;
+    
+    // Background music melody
+    const melody = [262, 294, 330, 349, 392, 440, 494, 523, 494, 440, 392, 349, 330, 294, 262, 294];
+    let noteIndex = 0;
+    
+    function playNote(freq) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.value = 0.05;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+      osc.stop(audioCtx.currentTime + 0.4);
+    }
+    
+    function startMusic() {
+      if (!musicPlaying) {
+        audioCtx.resume();
+        musicPlaying = true;
+        musicInterval = setInterval(() => {
+          playNote(melody[noteIndex]);
+          noteIndex = (noteIndex + 1) % melody.length;
+        }, 400);
+        document.getElementById('musicBtn').textContent = '🎵 Music ON';
+      } else {
+        stopMusic();
+      }
+    }
+    
+    function stopMusic() {
+      musicPlaying = false;
+      clearInterval(musicInterval);
+      document.getElementById('musicBtn').textContent = '🎵 Music OFF';
+    }
+    
+    function playSound(freq, duration, type = 'sine') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = 0.1;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + duration);
+    }
+    
+    function happySound() {
+      playSound(523, 0.1);
+      setTimeout(() => playSound(659, 0.1), 100);
+      setTimeout(() => playSound(784, 0.2), 200);
+    }
+    
+    function clickSound() {
+      playSound(440, 0.1);
+    }
     let rock = {
       name: 'Rocky',
       hunger: 100,
@@ -247,12 +312,14 @@
     }
     
     function feed() {
+      clickSound();
       if (rock.hunger < 100) {
         rock.hunger = Math.min(100, rock.hunger + 25);
         rock.energy = Math.min(100, rock.energy + 10);
         showMessage('happy');
         addXP(5);
         animateRock();
+        happySound();
         updateDisplay();
         saveGame();
       } else {
@@ -261,6 +328,7 @@
     }
     
     function play() {
+      clickSound();
       if (rock.energy >= 20) {
         rock.happiness = Math.min(100, rock.happiness + 30);
         rock.energy = Math.max(0, rock.energy - 20);
@@ -268,6 +336,7 @@
         showMessage('happy');
         addXP(10);
         animateRock();
+        happySound();
         updateDisplay();
         saveGame();
       } else {
@@ -276,26 +345,31 @@
     }
     
     function clean() {
+      clickSound();
       rock.clean = 100;
       rock.happiness = Math.min(100, rock.happiness + 15);
       showMessage('happy');
       addXP(5);
       animateRock();
+      happySound();
       updateDisplay();
       saveGame();
     }
     
     function sleep() {
+      clickSound();
       rock.energy = 100;
       rock.hunger = Math.max(0, rock.hunger - 20);
       showMessage('happy');
       addXP(5);
       document.getElementById('message').textContent = 'Zzz... 😴✨ Good nap!';
+      happySound();
       updateDisplay();
       saveGame();
     }
     
     function petRock() {
+      clickSound();
       rock.happiness = Math.min(100, rock.happiness + 5);
       showMessage('happy');
       addXP(2);
