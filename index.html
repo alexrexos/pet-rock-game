@@ -586,21 +586,19 @@
     }
     
     function translateToRock(text) {
-      // Fun rock language converter
+      // Fun rock language converter - each word becomes a rock sound!
       const words = text.toLowerCase().split(' ');
+      const rockSounds = ['rumble', 'clack', 'tumble', 'grumble', 'sparkle', 'pebble', 'crack'];
       const rockWords = words.map(word => {
-        const len = word.length;
-        if (len <= 2) return 'clack';
-        if (len <= 4) return 'rumble';
-        if (len <= 6) return 'grumble';
-        return 'tumble';
+        const soundIndex = word.length % rockSounds.length;
+        return rockSounds[soundIndex];
       });
       return '*' + rockWords.join(' ') + '*';
     }
     
     function translateFromRock(rockText) {
       // Convert rock sounds back to human language
-      const sounds = rockText.replace(/[*]/g, '').trim().split(' ');
+      const sounds = rockText.replace(/[*]/g, '').trim().toLowerCase().split(/\s+/);
       const meanings = {
         'clack': 'yes',
         'rumble': 'happy',
@@ -620,10 +618,11 @@
         'muddy': 'yuck',
         'cracked': 'sad',
         'faded': 'miss',
-        'gentle': 'nice',
-        'tumble': 'play'
+        'gentle': 'nice'
       };
-      return sounds.map(s => meanings[s] || '✨').join(' ');
+      // Only show words we know, skip unknown ones
+      const translated = sounds.map(s => meanings[s]).filter(s => s);
+      return translated.length > 0 ? translated.join(' ') : 'I don\'t understand that rock sound! Try: rumble, clack, sparkle, grumble, pebble 🪨';
     }
     
     function startGame() {
@@ -690,13 +689,13 @@
         return;
       }
       const rockTranslation = translateToRock(input);
-      document.getElementById('translationResult').innerHTML = '<span style="font-size:1.2em;">🪨 Rock says:</span><br><strong style="font-size:1.3em; color:#9b59b6;">' + rockTranslation + '</strong>';
+      document.getElementById('translationResult').innerHTML = '<span style="font-size:1.2em;">🪨 Rock says:</span><br><strong style="font-size:1.3em; color:#9b59b6;">' + rockTranslation + '</strong><br><em style="color:#888; font-size:0.9em;">(Rock language is based on word length!)</em>';
     }
 
     function translateRockToHuman() {
       const input = document.getElementById('humanText').value.trim();
       if (!input) {
-        document.getElementById('translationResult').innerHTML = '<em style="color:#e75480;">Type rock sounds! 🪨</em>';
+        document.getElementById('translationResult').innerHTML = '<em style="color:#e75480;">Type rock sounds like: *rumble* or *clack* 🪨</em>';
         return;
       }
       const humanTranslation = translateFromRock(input);
