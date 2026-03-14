@@ -223,6 +223,7 @@
       <div class="hearts" id="hearts">💕💕💕💕💕</div>
       <div class="rock" id="rock" onclick="petRock()">🪨</div>
       <div class="message" id="message">Hi! I'm happy to meet you!</div>
+      <div id="rockTranslation" style="display:none; background:#f0f0f0; padding:10px; border-radius:15px; margin:10px 0; font-style:italic; color:#666;">🪨 Rock says: <span id="rockTranslationText"></span></div>
       <div class="level">Level: <span id="level">1</span> ⭐</div>
       
       <div class="stats">
@@ -257,8 +258,23 @@
         <input type="text" id="foodSearch" placeholder="🔍 Search for food..." oninput="filterFood()">
         <div id="foodList"></div>
       </div>
+      
+      <div id="translatorMenu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.3); z-index:1000; width:90%; max-width:400px;">
+        <span class="close-btn" onclick="closeTranslatorMenu()">✖</span>
+        <h2 style="color:#e75480;">🪨 Rock Translator 🗣️</h2>
+        <p style="color:#888; font-size:0.9em;">Talk to your rock!</p>
+        <input type="text" id="humanText" placeholder="Type something..." style="width:100%; padding:10px; border:2px solid #43e97b; border-radius:10px; font-size:1em; margin:10px 0;">
+        <div class="buttons" style="margin:10px 0;">
+          <button onclick="translateHumanToRock()" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">🪨 To Rock</button>
+          <button onclick="translateRockToHuman()" style="background: linear-gradient(135deg, #fa709a, #fee140); color: white;">👤 To Human</button>
+        </div>
+        <div id="translationResult" style="background:#f0f0f0; padding:15px; border-radius:15px; min-height:40px; text-align:center;">
+          <em style="color:#888;">Translation will appear here...</em>
+        </div>
+      </div>
       <div class="buttons">
         <button id="musicBtn" onclick="startMusic()" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white;">🎵 Music OFF</button>
+        <button onclick="openTranslatorMenu()" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">🪨 Rock Translator</button>
         <button onclick="toggleMusicSettings()" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: white;">⚙️ Settings</button>
       </div>
       <div id="musicSettings" style="display:none;">
@@ -433,6 +449,76 @@
       sad: ['I\'m sad...', 'Play with me?', '*lonely rock*']
     };
     
+    // Rock Language Translator! 🪨🗣️
+    const rockLanguage = {
+      happy: ['*rumbles happily*', '*clack clack*', '*smooth vibrations*', '*sparkle sounds*', '*tumble tumble*'],
+      hungry: ['*grumble grumble*', '*crumbly noises*', '*hollow echo*'],
+      tired: ['*slow grinding*', '*pebble snore*', '*mossy yawn*'],
+      dirty: ['*dusty cough*', '*sandy scratches*', '*muddy grumble*'],
+      sad: ['*cracked whisper*', '*lonely echo*', '*faded shine*']
+    };
+    
+    let translatorOn = false;
+    
+    function toggleTranslator() {
+      translatorOn = !translatorOn;
+      const translationDiv = document.getElementById('rockTranslation');
+      if (translatorOn) {
+        translationDiv.style.display = 'block';
+        translateCurrentMessage();
+      } else {
+        translationDiv.style.display = 'none';
+      }
+    }
+    
+    function openTranslatorMenu() {
+      document.getElementById('translatorMenu').style.display = 'block';
+    }
+    
+    function translateCurrentMessage() {
+      if (!translatorOn) return;
+      const currentMsg = document.getElementById('message').textContent;
+      
+      // Find which category the message belongs to
+      for (const [type, msgs] of Object.entries(messages)) {
+        if (msgs.includes(currentMsg)) {
+          const rockSayings = rockLanguage[type];
+          const rockSaying = rockSayings[Math.floor(Math.random() * rockSayings.length)];
+          document.getElementById('rockTranslationText').textContent = rockSaying;
+          return;
+        }
+      }
+      // Default rock translation
+      document.getElementById('rockTranslationText').textContent = '*gentle rumble*';
+    }
+    
+    function translateToRock(text) {
+      // Fun rock language converter
+      const words = text.toLowerCase().split(' ');
+      const rockWords = words.map(word => {
+        const len = word.length;
+        if (len <= 2) return 'clack';
+        if (len <= 4) return 'rumble';
+        if (len <= 6) return 'grumble';
+        return 'tumble';
+      });
+      return '*' + rockWords.join(' ') + '*';
+    }
+    
+    function translateFromRock(rockText) {
+      // Convert rock sounds back to human language
+      const sounds = rockText.replace(/[*]/g, '').trim().split(' ');
+      const meanings = {
+        'clack': 'yes',
+        'rumble': 'happy',
+        'grumble': 'hungry',
+        'tumble': 'excited',
+        'crack': 'sad',
+        'echo': 'lonely'
+      };
+      return sounds.map(s => meanings[s] || 'hmm').join(' ');
+    }
+    
     function startGame() {
       const name = document.getElementById('rockName').value.trim();
       if (name) {
@@ -463,15 +549,16 @@
       const msgs = messages[type];
       const msg = msgs[Math.floor(Math.random() * msgs.length)];
       document.getElementById('message').textContent = msg;
+      translateCurrentMessage();
     }
     
     const foodItems = {
-      'Food': ['🍕 Pizza', '🍔 Burger', '🍟 Fries', '🌭 Hot Dog', '🍝 Pasta', '🍜 Noodles', '🍛 Rice', '🥗 Salad', '🥪 Sandwich', '🌮 Taco', '🌯 Burrito', '🍱 Sushi', '🍖 Steak', '🍗 Chicken', '🥩 Beef', '🍤 Shrimp', '🦀 Crab', '🦞 Lobster', '🦐 Prawn', '🥚 Egg', '🍳 Fried Egg', '🥞 Pancakes', '🧇 Waffles', '🥓 Bacon', '🥨 Pretzel'],
+      'Food': ['🍕 Pizza', '🍔 Burger', '🍟 Fries', '🌭 Hot Dog', '🍝 Pasta', '🍜 Noodles', '🍛 Rice', '🥗 Salad', '🥪 Sandwich', '🌮 Taco', '🌯 Burrito', '🍱 Sushi', '🍖 Steak', '🍗 Chicken', '🥩 Beef', '🍤 Shrimp', '🦀 Crab', '🦞 Lobster', '🦐 Prawn', '🥚 Egg', '🍳 Fried Egg', '🥞 Pancakes', '🧇 Waffles', '🥨 Pretzel'],
       'Fruits': ['🍎 Apple', '🍌 Banana', '🍇 Grapes', '🍓 Strawberry', '🍒 Cherry', '🍑 Peach', '🍍 Pineapple', '🥝 Kiwi', '🍉 Watermelon', '🍊 Orange', '🍋 Lemon', '🥭 Mango', '🥥 Coconut', '🍈 Melon', '🍏 Green Apple'],
       'Vegetables': ['🥕 Carrot', '🥒 Cucumber', '🥬 Lettuce', '🥦 Broccoli', '🧅 Onion', '🧄 Garlic', '🍄 Mushroom', '🌽 Corn', '🍅 Tomato', '🥔 Potato', '🥑 Avocado', '🌶️ Pepper', '🫑 Bell Pepper'],
       'Sweets': ['🍩 Donut', '🍪 Cookie', '🎂 Cake', '🧁 Cupcake', '🥧 Pie', '🍫 Chocolate', '🍬 Candy', '🍭 Lollipop', '🍮 Pudding', '🍯 Honey', '🥮 Mooncake', '🍡 Dango'],
       'Ice Cream': ['🍦 Soft Serve', '🍨 Ice Cream', '🍧 Shaved Ice', '🧊 Ice Cube'],
-      'Drinks': ['🥤 Soda', '🍹 Juice', '🧃 Drink Box', '🧋 Bubble Tea', '🍵 Tea', '☕ Coffee', '🥛 Milk', '🍶 Sake', '🍺 Beer', '🍷 Wine', '🥂 Champagne', '🍸 Cocktail', '🍹 Tropical Drink'],
+      'Drinks': ['🥤 Soda', '🍹 Juice', '🧃 Drink Box', '🧋 Bubble Tea', '🍵 Tea', '☕ Coffee', '🥛 Milk', '🍹 Tropical Drink', '🧊 Iced Water', '🍋 Lemonade'],
       'Snacks': ['🍿 Popcorn', '🥜 Peanuts', '🍫 Chocolate Bar', '🥨 Pretzel', '🥯 Bagel', '🥐 Croissant', '🥖 Bread', '🧀 Cheese', '🌯 Wrap']
     };
 
@@ -483,6 +570,30 @@
 
     function closeFoodMenu() {
       document.getElementById('foodMenu').style.display = 'none';
+    }
+
+    function closeTranslatorMenu() {
+      document.getElementById('translatorMenu').style.display = 'none';
+    }
+
+    function translateHumanToRock() {
+      const input = document.getElementById('humanText').value.trim();
+      if (!input) {
+        document.getElementById('translationResult').innerHTML = '<em style="color:#e75480;">Type something first! 🪨</em>';
+        return;
+      }
+      const rockTranslation = translateToRock(input);
+      document.getElementById('translationResult').innerHTML = '<span style="font-size:1.2em;">🪨 Rock says:</span><br><strong style="font-size:1.3em; color:#9b59b6;">' + rockTranslation + '</strong>';
+    }
+
+    function translateRockToHuman() {
+      const input = document.getElementById('humanText').value.trim();
+      if (!input) {
+        document.getElementById('translationResult').innerHTML = '<em style="color:#e75480;">Type rock sounds! 🪨</em>';
+        return;
+      }
+      const humanTranslation = translateFromRock(input);
+      document.getElementById('translationResult').innerHTML = '<span style="font-size:1.2em;">👤 Human meaning:</span><br><strong style="font-size:1.3em; color:#e75480;">' + humanTranslation + '</strong>';
     }
 
     function renderFoodList() {
@@ -649,4 +760,5 @@
     loadGame();
   </script>
 </body>
+</html>
 </html>
