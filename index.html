@@ -353,18 +353,19 @@
         <div id="foodList"></div>
       </div>
       
-      <div id="translatorMenu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.3); z-index:1000; width:90%; max-width:400px;">
+      <div id="translatorMenu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.3); z-index:1000; width:90%; max-width:450px;">
         <span class="close-btn" onclick="closeTranslatorMenu()">✖</span>
-        <h2 style="color:#e75480;">🪨 Rock Translator 🗣️</h2>
-        <p style="color:#888; font-size:0.9em;">Talk to your rock!</p>
-        <input type="text" id="humanText" placeholder="Type something..." style="width:100%; padding:10px; border:2px solid #43e97b; border-radius:10px; font-size:1em; margin:10px 0;">
-        <div class="buttons" style="margin:10px 0;">
-          <button onclick="translateHumanToRock()" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">🪨 To Rock</button>
-          <button onclick="translateRockToHuman()" style="background: linear-gradient(135deg, #fa709a, #fee140); color: white;">👤 To Human</button>
+        <h2 style="color:#e75480; margin-bottom:5px;">🪨 Talk to Your Rock! 🗣️</h2>
+        <p style="color:#888; font-size:0.9em; margin-bottom:10px;">Your rock understands you! 💕</p>
+        
+        <div id="chatMessages" style="background:#f8f8f8; border-radius:15px; padding:10px; min-height:120px; max-height:200px; overflow-y:auto; margin-bottom:10px;">
+          <div style="text-align:center; color:#888; font-size:0.9em; padding:30px;">
+            🪨 Your rock is listening...<br>Say something!
+          </div>
         </div>
-        <div id="translationResult" style="background:#f0f0f0; padding:15px; border-radius:15px; min-height:40px; text-align:center;">
-          <em style="color:#888;">Translation will appear here...</em>
-        </div>
+        
+        <input type="text" id="rockChatInput" placeholder="Type to your rock..." style="width:100%; padding:12px; border:3px solid #e75480; border-radius:15px; font-size:1.1em;" onkeypress="if(event.key==='Enter')talkToRock()">
+        <button onclick="talkToRock()" style="width:100%; margin-top:10px; padding:12px; border-radius:15px; font-size:1.2em; background:linear-gradient(135deg, #43e97b, #38f9d7); color:white; border:none; cursor:pointer;">🪨 Send to Rock!</button>
       </div>
       <div class="buttons">
         <button id="musicBtn" onclick="startMusic()" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white;">🎵 Music OFF</button>
@@ -680,6 +681,77 @@
 
     function closeTranslatorMenu() {
       document.getElementById('translatorMenu').style.display = 'none';
+    }
+
+    function talkToRock() {
+      const input = document.getElementById('rockChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      input.value = '';
+      const chatDiv = document.getElementById('chatMessages');
+      
+      // Add user message
+      chatDiv.innerHTML += `
+        <div style="text-align:right; margin:8px 0;">
+          <span style="background:linear-gradient(135deg, #43e97b, #38f9d7); color:white; padding:8px 12px; border-radius:15px; display:inline-block; max-width:80%;">
+            👤 ${text}
+          </span>
+        </div>
+      `;
+      
+      // Get rock's response
+      const response = getRockResponse(text.toLowerCase());
+      
+      // Add rock message after a tiny delay
+      setTimeout(() => {
+        chatDiv.innerHTML += `
+          <div style="text-align:left; margin:8px 0;">
+            <span style="background:linear-gradient(135deg, #f093fb, #f5576c); color:white; padding:8px 12px; border-radius:15px; display:inline-block; max-width:80%;">
+              🪨 ${response}
+            </span>
+          </div>
+        `;
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      }, 400);
+      
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    
+    function getRockResponse(text) {
+      // Rock responds based on what you say!
+      if (text.includes('love you')) return '*rumble rumble* 💕 I love you too!';
+      if (text.includes('love')) return '*clack clack* 💕 Aww!';
+      if (text.includes('hug')) return '*warm rumble* 🤗 *hugs back*';
+      if (text.includes('kiss')) return '*happy clack* 💋 Mwah!';
+      if (text.includes('friend')) return '*tumble tumble* 🌟 Best friends!';
+      if (text.includes('cute')) return '*sparkle sparkle* ✨ You\'re cuter!';
+      if (text.includes('how are you')) return rock.happiness > 70 ? '*rumble rumble* 😊 I\'m so happy!' : '*grumble grumble* 😔 Need attention...';
+      if (text.includes('hungry')) return rock.hunger > 50 ? '*content rumble* 😋 I\'m okay!' : '*hollow echo* 🍎 I\'m hungry!';
+      if (text.includes('name')) return '*proud rumble* 🪨 I\'m ' + rock.name + '!';
+      if (text.includes('play')) return '*excited tumble* 🎮 Yes let\'s play!';
+      if (text.includes('sleep')) return '*pebble snore* 😴 Zzz...';
+      if (text.includes('hi') || text.includes('hello') || text.includes('hey')) return '*friendly rumble* 👋 Hi there!';
+      if (text.includes('good morning')) return '*sunny rumble* ☀️ Good morning!';
+      if (text.includes('good night')) return '*sleepy pebble* 🌙 Sweet dreams!';
+      if (text.includes('pretty') || text.includes('beautiful')) return '*blushing rumble* 😊 *blushes*';
+      if (text.includes('awesome') || text.includes('cool')) return '*proud sparkle* ⭐ Thanks!';
+      if (text.includes('thank')) return '*happy tumble* 🤗 You\'re welcome!';
+      if (text.includes('sad')) return '*gentle rumble* 💕 Don\'t be sad!';
+      if (text.includes('yes')) return '*clack clack* 👍 Yay!';
+      if (text.includes('no')) return '*grumble* 😕 Aww...';
+      if (text.includes('bye')) return '*sad echo* 👋 Come back soon!';
+      
+      // Default happy responses
+      const defaults = [
+        '*curious rumble* 🤔 Interesting!',
+        '*thoughtful clack* 💭 Tell me more!',
+        '*happy tumble* ✨ I\'m listening!',
+        '*gentle rumble* 💕 That\'s nice!',
+        '*excited sparkle* 🌟 Cool!',
+        '*friendly clack* 🪨 I understand!'
+      ];
+      return defaults[Math.floor(Math.random() * defaults.length)];
     }
 
     function translateHumanToRock() {
